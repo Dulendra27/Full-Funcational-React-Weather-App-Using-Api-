@@ -9,19 +9,23 @@ import humidity_icon from '../assets/humidity_icon.png';
 import wind_icon from '../assets/wind_icon.png'
 
 export default function Weather(){
+    const [loading,setLoading] = useState(false)
     const [weather,setWeather] = useState({})
     const [city,setCity] = useState('')
   const apiKey = `d8ffd0df1dfa702d12938225900ecd53`
    
    const getWeather = () =>{
+         setLoading(true)
          fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`)
          .then(response=> response.json())
          .then(data => setWeather(data))
-         .catch(error => console.log(error))
+         .catch(error => {console.log(error)})
+         .finally(()=>{setLoading(false)})
      };
      const handleCityChange = (e) => {
       setCity(e.target.value.toLowerCase())
      };
+   
   
     return(
         <div className="weather">
@@ -29,7 +33,7 @@ export default function Weather(){
              <input type="text" placeholder="Search" value={city} onChange={handleCityChange} />
              <img src={search_icon} alt=""  onClick={getWeather} />
             </div>
-            {weather.main && (
+            {loading ? 'LOADING...' : weather.main && (
              < div className='list' key={weather.id}>
             <img src={clear_icon} alt=""  className="weather-icon"/>
             <p className="temperature">{weather.main.temp}°C</p>
